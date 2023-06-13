@@ -9,7 +9,7 @@ OBJS = $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
 TARGET = debugger.out
 
-.PHONY: gen_build_path gen_execute clean
+.PHONY: gen_build_path gen_execute test clean
 
 $(TARGET): gen_build_path gen_execute
 
@@ -22,6 +22,9 @@ gen_execute: $(OBJS)
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $< -c -o $@ $(CFLAGS) 
 
+test: example/hello.cpp
+	g++ -g $< -o hello.out
+
 clean:
-	rm -f $(TARGET) || true
+	rm -f *.out || true
 	rm -rf $(BUILD_DIR) || true
