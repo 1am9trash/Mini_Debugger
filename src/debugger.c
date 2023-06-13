@@ -51,15 +51,22 @@ void run_main_loop(uint32_t argc, char *argv[]) {
         return;
     }
 
-    char *program_name = argv[1];
-
     pid_t pid = fork();
     if (pid == 0) {
+        char *program_name = argv[1];
+        char **program_arg;
+        
+        program_arg = malloc(argc * sizeof(char *));
+        for (uint32_t i = 1; i < argc; i++) {
+            program_arg[i - 1] = argv[i];
+        }
+        argv[argc - 1] = NULL;
+
         fprintf(stdout, "forked child process\n");
 
         personality(ADDR_NO_RANDOMIZE);
         ptrace(PTRACE_TRACEME, 0, NULL, NULL);
-        execlp(program_name, program_name, NULL);
+        execvp(program_name, program_arg);
     } else if (pid > 0) {
         fprintf(stdout, "parent process\n");
         fprintf(stdout, "child process pid is %d\n", pid);
